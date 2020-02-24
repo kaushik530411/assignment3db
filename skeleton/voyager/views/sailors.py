@@ -12,9 +12,20 @@ from voyager.validate import NAME_RE, INT_RE, DATE_RE
 def get_all_sailors(conn):
     return execute(conn, "SELECT s.sid, s.name, s.age, s.experience FROM Sailors AS s")
 
+def get_sailors_from_boat_name(conn, boat_name):
+    return execute(conn, 
+    "SELECT DISTINCT Sailors.sid, Sailors.name  FROM ((Voyages INNER JOIN Boats ON Voyages.bid = Boats.bid) INNER JOIN Sailors ON Voyages.sid = Sailors.sid) WHERE Boats.name = :b_name", {'b_name': boat_name})
+
 def views(bp):
     @bp.route("/sailors")
     def _get_all_sailors():
         with get_db() as conn:
             rows = get_all_sailors(conn)
         return render_template("table.html", name="sailors", rows=rows)
+    
+    @bp.route("/sailors/who-sailed")
+    def _get_sailors_from_boat_name():
+        with get_db() as conn:
+            boat_name = request.args.get('boat-name')
+            rows = get_sailors_from_boat_name(conn, boat_name)
+        return render_template("table.html", name="Sailors who sailed boat: " + boat_name, rows=rows)
