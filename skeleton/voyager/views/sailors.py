@@ -41,3 +41,8 @@ def views(bp):
             boat_color = request.args.get('color')
             rows = get_sailors_from_boat_color(conn, boat_color)
         return render_template("table.html", name="Sailors who sailed boat color: " + boat_color, rows=rows)
+
+    @bp.route("/sailors/add", methods=['POST', 'GET'])
+    def _add_sailors():
+        atrributes = {"Name" : "text", "age": "number", "experience": "number" }
+        return render_template("form.html", name="Add Sailors: ", URI="/sailors/add/submit",  submit_message="Add Sailors", atrributes=atrributes)
