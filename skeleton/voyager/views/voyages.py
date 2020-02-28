@@ -5,6 +5,7 @@ from flask import request
 from flask import flash
 from flask import redirect
 from flask import url_for
+import datetime
 
 
 from voyager.db import get_db, execute
@@ -17,6 +18,10 @@ def get_sailors_from_date(conn, voyage_date):
     "SELECT DISTINCT Sailors.sid, Sailors.name  FROM (Sailors INNER JOIN Voyages ON Voyages.sid = Sailors.sid) WHERE Voyages.date_of_voyage = :v_date", {'v_date': voyage_date})
 
 def insert_voyages_in_DB(conn, sid, bid, date):
+    try:
+        datetime.datetime.strptime(date, '%Y-%m-%d')
+    except ValueError:
+        raise Exception
     return execute(conn,
     "INSERT INTO Voyages (sid, bid, date_of_voyage) VALUES (:sid, :bid, :date);", {'sid': sid, "bid": bid, "date": date}
     )
