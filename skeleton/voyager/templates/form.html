@@ -1,0 +1,47 @@
+<html>
+  <head>
+    <title>{{ name }}</title>
+  </head>
+  <body>
+    <h1>{{ name }}</h1>
+    <form action={{ URI }} method=POST>
+        {% for id_name, id_type in atrributes.items() %}
+        <label for={{ id_name }}>{{ id_name }}</label><br>
+        <input type={{ id_type }} id={{ id_name }} name={{ id_name }}><br>
+        {% endfor %}
+        <input type=submit value={{ submit_message }}/><br>
+    </form>
+    </form>
+  </body>
+</html>
+
+
+
+<!-- <form action="/boats/add/submit" method=POST>
+    <label for="name">Name:</label><br>
+    <input type="text" id="name" name="name"><br>
+    <label for="color">Color:</label><br>
+    <input type="text" id="color" name="color"><br><br>
+    <input type=submit value="Add boat"/><br>
+</form> -->
+
+
+
+<!-- 
+
+<table>
+    {% if rows %}
+    <tr>
+      {% for name in rows[0].keys() %}
+        <th>{{ name }}</th>
+      {% endfor %}
+    <tr>
+    {% endif %}
+    {% for row in rows %}
+    <tr>
+      {% for col in row.values() %}
+        <td>{{ col }}</td>
+      {% endfor %}
+    </tr>
+    {% endfor %}
+  </table> -->
