@@ -19,6 +19,8 @@ def get_boats_by_popularity(conn):
     "SELECT DISTINCT Boats.bid, Boats.name, COUNT(Boats.bid) as num_of_voyages  FROM (Boats INNER JOIN Voyages ON Voyages.bid = Boats.bid) GROUP BY Boats.bid ORDER BY COUNT(Boats.bid) DESC")
 
 def insert_boat_in_DB(conn, boat_name, boat_color):
+    if boat_name == None or boat_color == None or boat_name or boat_name == "" or boat_color == "":
+        raise Exception    
     return execute(conn,
     "INSERT INTO Boats (name, color) VALUES (:boat_name, :boat_color);", {'boat_name': boat_name, "boat_color": boat_color}
     )
@@ -53,5 +55,8 @@ def views(bp):
         with get_db() as conn:
             boat_name = request.form.get("Name")
             boat_color = request.form.get("Color")
-            insert_boat_in_DB(conn, boat_name, boat_color)
+            try:
+                insert_boat_in_DB(conn, boat_name, boat_color)
+            except Exception:
+                return render_template("form_error.html", errors=["Your insertions did not went through check your inputs again."])
         return _boats()
