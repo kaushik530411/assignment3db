@@ -12,6 +12,11 @@ def get_sailors_from_date(conn, voyage_date):
     return execute(conn, 
     "SELECT DISTINCT Sailors.sid, Sailors.name  FROM (Sailors INNER JOIN Voyages ON Voyages.sid = Sailors.sid) WHERE Voyages.date_of_voyage = :v_date", {'v_date': voyage_date})
 
+def insert_voyages_in_DB(conn, sid, bid, date):
+    return execute(conn,
+    "INSERT INTO Voyages (sid, bid, date_of_voyage) VALUES (:sid, :bid, :date);", {'sid': sid, "bid": bid, "date": date}
+    )
+
 def views(bp):
     @bp.route("/voyages")
     def _get_all_voyages():
@@ -30,4 +35,13 @@ def views(bp):
     def _add_voyages():
         atrributes = {"Sid" : "number", "Bid": "number", "Date": "text" }
         return render_template("form.html", name="Add Voyages: ", URI="/voyages/add/submit",  submit_message="Add", atrributes=atrributes)
+    
+    @bp.route("/voyages/add/submit", methods=['POST'])
+    def _insert_voyages_in_DB():
+        with get_db() as conn:
+            sid = request.form.get("Sid")
+            bid = request.form.get("Bid")
+            date = request.form.get("Date")
+            insert_voyages_in_DB(conn, sid, bid, date)
+        return _get_all_voyages()
     
