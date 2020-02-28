@@ -19,6 +19,11 @@ def get_sailors_from_boat_name(conn, boat_name):
 def get_sailors_from_boat_color(conn, boat_color):
     return execute(conn, 
     "SELECT DISTINCT Sailors.sid, Sailors.name  FROM ((Voyages INNER JOIN Boats ON Voyages.bid = Boats.bid) INNER JOIN Sailors ON Voyages.sid = Sailors.sid) WHERE Boats.color = :b_color", {'b_color': boat_color})
+
+def insert_sailors_in_DB(conn, sailors_name, sailors_age, sailors_experience):
+    return execute(conn,
+    "INSERT INTO Sailors (name, age, experience) VALUES (:sailors_name, :sailors_age, :sailors_experience);", {'sailors_name': sailors_name, "sailors_age": sailors_age, "sailors_experience": sailors_experience}
+    )
     
 
 def views(bp):
@@ -44,5 +49,14 @@ def views(bp):
 
     @bp.route("/sailors/add", methods=['POST', 'GET'])
     def _add_sailors():
-        atrributes = {"Name" : "text", "age": "number", "experience": "number" }
+        atrributes = {"Name" : "text", "Age": "number", "Experience": "number" }
         return render_template("form.html", name="Add Sailors: ", URI="/sailors/add/submit",  submit_message="Add Sailors", atrributes=atrributes)
+
+    @bp.route("/sailors/add/submit", methods=['POST'])
+    def _insert_sailors_in_DB():
+        with get_db() as conn:
+            sailors_name = request.form.get("Name")
+            sailors_age = request.form.get("Age")
+            sailors_experience = request.form.get("Experience")
+            insert_sailors_in_DB(conn, sailors_name, sailors_age, sailors_experience)
+        return _get_all_sailors()
