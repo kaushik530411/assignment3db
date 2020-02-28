@@ -21,6 +21,8 @@ def get_sailors_from_boat_color(conn, boat_color):
     "SELECT DISTINCT Sailors.sid, Sailors.name  FROM ((Voyages INNER JOIN Boats ON Voyages.bid = Boats.bid) INNER JOIN Sailors ON Voyages.sid = Sailors.sid) WHERE Boats.color = :b_color", {'b_color': boat_color})
 
 def insert_sailors_in_DB(conn, sailors_name, sailors_age, sailors_experience):
+    if sailors_name == None or sailors_age == None or sailors_experience == None or sailors_name == "" or sailors_age=="" or sailors_experience=="" or int(sailors_age) < 0 or int(sailors_experience) < 0 :
+        raise Exception
     return execute(conn,
     "INSERT INTO Sailors (name, age, experience) VALUES (:sailors_name, :sailors_age, :sailors_experience);", {'sailors_name': sailors_name, "sailors_age": sailors_age, "sailors_experience": sailors_experience}
     )
@@ -58,5 +60,8 @@ def views(bp):
             sailors_name = request.form.get("Name")
             sailors_age = request.form.get("Age")
             sailors_experience = request.form.get("Experience")
-            insert_sailors_in_DB(conn, sailors_name, sailors_age, sailors_experience)
+            try:
+                insert_sailors_in_DB(conn, sailors_name, sailors_age, sailors_experience)
+            except Exception:
+                return render_template("form_error.html", errors=["Your insertions did not went through check your inputs again."])
         return _get_all_sailors()
