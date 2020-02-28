@@ -2,6 +2,10 @@ from collections import namedtuple
 
 from flask import render_template
 from flask import request
+from flask import flash
+from flask import redirect
+from flask import url_for
+
 
 from voyager.db import get_db, execute
 
@@ -42,6 +46,9 @@ def views(bp):
             sid = request.form.get("Sid")
             bid = request.form.get("Bid")
             date = request.form.get("Date")
-            insert_voyages_in_DB(conn, sid, bid, date)
+            try:
+                insert_voyages_in_DB(conn, sid, bid, date)
+            except Exception:
+                return render_template("form_error.html", errors=["Your insertions did not went through check your inputs again."])
         return _get_all_voyages()
     
