@@ -25,3 +25,9 @@ def views(bp):
             voyage_date = request.args.get("date")
             rows = get_sailors_from_date(conn, voyage_date)
         return render_template("table.html", name="Sailors travelling on date: " + voyage_date, rows=rows)
+
+    @bp.route("/voyages/add", methods=['POST', 'GET'])
+    def _add_voyages():
+        atrributes = {"Sid" : "number", "Bid": "number", "Date": "text" }
+        return render_template("form.html", name="Add Voyages: ", URI="/voyages/add/submit",  submit_message="Add", atrributes=atrributes)
+    
