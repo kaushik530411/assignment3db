@@ -18,6 +18,11 @@ def get_boats_by_popularity(conn):
     return execute(conn, 
     "SELECT DISTINCT Boats.bid, Boats.name, COUNT(Boats.bid) as num_of_voyages  FROM (Boats INNER JOIN Voyages ON Voyages.bid = Boats.bid) GROUP BY Boats.bid ORDER BY COUNT(Boats.bid) DESC")
 
+def insert_boat_in_DB(conn, boat_name, boat_color):
+    return execute(conn,
+    "INSERT INTO Boats (name, color) VALUES (:boat_name, :boat_color);", {'boat_name': boat_name, "boat_color": boat_color}
+    )
+
 def views(bp):
     @bp.route("/boats")
     def _boats():
@@ -37,3 +42,18 @@ def views(bp):
         with get_db() as conn:
             rows = get_boats_by_popularity(conn)
         return render_template("table.html", name="Boats ordered by popularity (Num of Voyages): ", rows=rows)
+
+    @bp.route("/boats/add", methods=['POST', 'GET'])
+    def _add_boat():
+        atrributes = {"Name" : "text", "Color": "text" }
+        return render_template("form.html", name="Add Boats: ", URI="/boats/add/submit",  submit_message="Add boat", atrributes=atrributes)
+
+    @bp.route("/boats/add/submit", methods=['POST'])
+    def _insert_boat_in_DB():
+        with get_db() as conn:
+            print(request.form)
+            boat_name = request.form.get("Name")
+            boat_color = request.form.get("Color")
+            print(boat_name, boat_color)
+            insert_boat_in_DB(conn, boat_name, boat_color)
+        return _boats()
