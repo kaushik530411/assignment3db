@@ -23,7 +23,7 @@ def insert_voyages_in_DB(conn, sid, bid, date):
     except ValueError:
         raise Exception
     return execute(conn,
-    "INSERT INTO Voyages (sid, bid, date_of_voyage) VALUES (:sid, :bid, :date);", {'sid': sid, "bid": bid, "date": date}
+    "INSERT INTO Voyages (sid, bid, date_of_voyage) SELECT Sailors.sid, Boats.bid, :date FROM Sailors, Boats WHERE Sailors.sid=:sid AND Boats.bid=:bid;", {'sid': sid, "bid": bid, "date": date}
     )
 
 def views(bp):
@@ -56,4 +56,5 @@ def views(bp):
             except Exception:
                 return render_template("form_error.html", errors=["Your insertions did not went through check your inputs again."])
         return _get_all_voyages()
-    
+
+    #INSERT INTO Voyages (sid, bid, date_of_voyage) VALUES (:sid, :bid, :date)
