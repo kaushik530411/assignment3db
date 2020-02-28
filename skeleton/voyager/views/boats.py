@@ -51,9 +51,7 @@ def views(bp):
     @bp.route("/boats/add/submit", methods=['POST'])
     def _insert_boat_in_DB():
         with get_db() as conn:
-            print(request.form)
             boat_name = request.form.get("Name")
             boat_color = request.form.get("Color")
-            print(boat_name, boat_color)
             insert_boat_in_DB(conn, boat_name, boat_color)
         return _boats()
